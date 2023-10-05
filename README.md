@@ -13,9 +13,14 @@ A Flutter-based news app that allows users to read the latest news articles from
 
 
 # Screenshots
- <video width="250" controls >
-  <source src="assets/rec.mp4" type="video/mp4">
-</video> 
+<div height = "500">
+<img src="assets/landing_page.jpg" width="200">
+<img src="assets/all_news.jpg" width="200">
+<img src="assets/search_image.jpg" width="200">
+<img src="assets/tech.jpg" width="200">
+<img src="assets/reload.jpg" width="200">
+<img src="assets/news_details.jpg" width="200">
+</div>
 
 ### Installation
 
@@ -25,4 +30,3 @@ A Flutter-based news app that allows users to read the latest news articles from
    cd FlutterPress
 
    flutter run 
-    ```
