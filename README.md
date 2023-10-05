@@ -7,16 +7,22 @@ A Flutter-based news app that allows users to read the latest news articles from
 - Browse the latest news articles from various sources.
 - Landing page displayed only once using `shared_preferences`.
 - Clean and intuitive user interface.
+- Search for news articles.
+- Read news articles in a web view.
+- Pull to refresh news articles.
+
 
 # Screenshots
-<img src="assets/landing_page.jpg" width="300">
-<img src="assets/all_news.jpg" width="300">
-<img src="assets/news_details.jpg" width="300">
-
+ <video width="250" controls >
+  <source src="assets/rec.mp4" type="video/mp4">
+</video> 
 
 ### Installation
 
-1. Clone this repository:
-
    ```bash
-   git clone https://github.com/yourusername/flutter-news-app.git
+   git clone https://github.com/shutterscripter/FlutterPress
+   
+   cd FlutterPress
+
+   flutter run 
+    ```
