@@ -6,6 +6,7 @@ import 'package:news_app/components/custom_alert_dialog.dart';
 import 'package:news_app/model/article_model.dart';
 import 'package:news_app/model/category_model.dart';
 import 'package:news_app/screen/category_news_screen.dart';
+import 'package:news_app/screen/fav_news.dart';
 import 'package:news_app/services/api_services.dart';
 import 'package:news_app/services/data.dart';
 
@@ -43,6 +44,21 @@ class _FirstScreenState extends State<FirstScreen> {
               child: CustomScrollView(
                 slivers: [
                   SliverAppBar(
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          //navigate to fav news screen
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const FavNews()));
+                        },
+                        icon: const Icon(
+                          Icons.favorite_rounded,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ],
                     leading: InkWell(
                       onTap: () {
                         _showDialog(context);

@@ -6,6 +6,8 @@ A Flutter-based news app that allows users to read the latest news articles from
 
 - Browse the latest news articles from various sources.
 - Landing page displayed only once using `shared_preferences`.
+- Browse news articles by category.
+- Save news articles to read later using `Hive DB`.
 - Clean and intuitive user interface.
 - Search for news articles.
 - Read news articles in a web view.
@@ -24,7 +26,7 @@ A Flutter-based news app that allows users to read the latest news articles from
 
 ### Installation
 
-   ```bash
+   ```bashtodays match timing
    git clone https://github.com/shutterscripter/FlutterPress
    
    cd FlutterPress
