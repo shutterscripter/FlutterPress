@@ -18,6 +18,7 @@ A Flutter-based news app that allows users to read the latest news articles from
 <div height = "500">
 <img src="assets/landing_page.jpg" width="200">
 <img src="assets/all_news.jpg" width="200">
+<img src="assets/fav.jpg" width="200">
 <img src="assets/search_image.jpg" width="200">
 <img src="assets/tech.jpg" width="200">
 <img src="assets/reload.jpg" width="200">
