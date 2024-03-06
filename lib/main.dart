@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:news_app/dependency_injection.dart';
 import 'package:news_app/screen/first_screen.dart';
 import 'package:news_app/screen/landing_page.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {

@@ -56,7 +56,10 @@ class _FavNewsState extends State<FavNews> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ArticleView(url: list[index]['url']),
+                  builder: (context) => ArticleView(
+                    url: list[index]['url'],
+                    desc: list[index]['desc'],
+                  ),
                 ),
               );
             },

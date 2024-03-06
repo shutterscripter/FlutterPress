@@ -3,8 +3,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class ArticleView extends StatefulWidget {
   String url;
+  String desc;
 
-  ArticleView({super.key, required this.url});
+  ArticleView({super.key, required this.url, required this.desc});
 
   @override
   State<ArticleView> createState() => _ArticleViewState();
@@ -29,35 +30,38 @@ class _ArticleViewState extends State<ArticleView> {
 
   @override
   Widget build(BuildContext context) {
-    return _loading? Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        //add back button
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Row(
-          children: [
-            Text(
-              "Flutter",
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+    return _loading
+        ? Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              //add back button
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              title: const Row(
+                children: [
+                  Text(
+                    "Flutter",
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Press",
+                    style: TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              "Press",
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-      body: WebViewWidget(controller: _controller),
-    ): const Center(
-      child: CircularProgressIndicator(),
-    );
+            body: WebViewWidget(controller: _controller),
+          )
+        : const Center(
+            child: CircularProgressIndicator(),
+          );
   }
 }

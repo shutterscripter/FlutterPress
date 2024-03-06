@@ -1,13 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:news_app/controller/first_screen_controller.dart';
+import 'package:news_app/model/article_model.dart';
 import 'package:news_app/screen/article_view.dart';
 import 'dart:io';
 import 'package:hive/hive.dart';
+import 'package:news_app/screen/summarized_article_screen.dart';
 
 class BlogTile extends StatefulWidget {
-  String imageUrl, title, desc, url, publishedAt;
+  final String imageUrl, title, desc, url, publishedAt;
 
-  BlogTile(
+  const BlogTile(
       {super.key,
       required this.desc,
       required this.publishedAt,
@@ -20,6 +24,11 @@ class BlogTile extends StatefulWidget {
 }
 
 class _BlogTileState extends State<BlogTile> {
+  final FirstScreenController _firstScreenController =
+      Get.put(FirstScreenController());
+
+  var summarizationWordsNums = 50;
+
   @override
   Widget build(BuildContext context) {
     Color _color = Colors.grey.shade400;
@@ -45,11 +54,26 @@ class _BlogTileState extends State<BlogTile> {
     }
 
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        ///TODO: summarize article
+        /*Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ArticleView(url: widget.url)));
+                builder: (context) =>
+                    ArticleView(url: widget.url, desc: widget.desc)));*/
+
+        var summarizedArticle = await _firstScreenController.summarizeText(
+            widget.desc,
+            "summarize this news article in $summarizationWordsNums words");
+
+        ArticleModel articleModel = ArticleModel(
+          title: widget.title,
+          description: summarizedArticle,
+          url: widget.url,
+          imageUrl: widget.imageUrl,
+          publishedAt: widget.publishedAt,
+        );
+        Get.to(SummarizedArticleScreen(articleModel: articleModel));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10.0),
@@ -75,7 +99,7 @@ class _BlogTileState extends State<BlogTile> {
                             child: Text(
                               '${result.toString()} ${parsedDate.hour}:${parsedDate.minute}',
                               style: const TextStyle(
-                                  color: Colors.grey,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14.0),
                             ),
@@ -139,8 +163,8 @@ class _BlogTileState extends State<BlogTile> {
                     borderRadius: BorderRadius.circular(15),
                     child: CachedNetworkImage(
                       imageUrl: widget.imageUrl,
-                      height: 120,
-                      width: 120,
+                      height: 110,
+                      width: 110,
                       fit: BoxFit.cover,
                     ),
                   ),
