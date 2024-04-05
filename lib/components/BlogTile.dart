@@ -26,8 +26,8 @@ class BlogTile extends StatefulWidget {
 class _BlogTileState extends State<BlogTile> {
   final FirstScreenController _firstScreenController =
       Get.put(FirstScreenController());
-
-  var summarizationWordsNums = 50;
+  bool isSummarized = false;
+  var summarizationWordsNums = 200;
 
   @override
   Widget build(BuildContext context) {
@@ -55,25 +55,7 @@ class _BlogTileState extends State<BlogTile> {
 
     return GestureDetector(
       onTap: () async {
-        ///TODO: summarize article
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ArticleView(url: widget.url, desc: widget.desc)));*/
-
-        var summarizedArticle = await _firstScreenController.summarizeText(
-            widget.desc,
-            "summarize this news article in $summarizationWordsNums words");
-
-        ArticleModel articleModel = ArticleModel(
-          title: widget.title,
-          description: summarizedArticle,
-          url: widget.url,
-          imageUrl: widget.imageUrl,
-          publishedAt: widget.publishedAt,
-        );
-        Get.to(SummarizedArticleScreen(articleModel: articleModel));
+        summarizeArticle();
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10.0),
@@ -175,5 +157,20 @@ class _BlogTileState extends State<BlogTile> {
         ),
       ),
     );
+  }
+
+  Future<void> summarizeArticle() async {
+    var summarizedArticle = await _firstScreenController.summarizeText(
+        widget.desc,
+        "summarize this news article in ${widget.desc.length * 0.30} words");
+
+    ArticleModel articleModel = ArticleModel(
+      title: widget.title,
+      description: summarizedArticle,
+      url: widget.url,
+      imageUrl: widget.imageUrl,
+      publishedAt: widget.publishedAt,
+    );
+    Get.to(SummarizedArticleScreen(articleModel: articleModel));
   }
 }

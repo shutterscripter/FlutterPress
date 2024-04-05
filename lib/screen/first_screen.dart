@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/components/category_tile.dart';
@@ -9,6 +10,7 @@ import 'package:news_app/screen/category_news_screen.dart';
 import 'package:news_app/screen/fav_news.dart';
 import 'package:news_app/services/api_services.dart';
 import 'package:news_app/services/data.dart';
+import 'package:news_app/utils/color_utils.dart';
 
 class FirstScreen extends StatefulWidget {
   const FirstScreen({super.key});
@@ -48,14 +50,11 @@ class _FirstScreenState extends State<FirstScreen> {
                       IconButton(
                         onPressed: () {
                           //navigate to fav news screen
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const FavNews()));
+                          Get.to(FavNews(), transition: Transition.rightToLeft);
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.favorite_rounded,
-                          color: Colors.blue,
+                          color: ColorUtils().purple,
                         ),
                       ),
                     ],
@@ -71,9 +70,9 @@ class _FirstScreenState extends State<FirstScreen> {
                           borderRadius: BorderRadius.circular(50),
                           color: Colors.grey[200],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.search,
-                          color: Colors.blue,
+                          color: ColorUtils().purple,
                           size: 25,
                         ),
                       ),
@@ -84,26 +83,9 @@ class _FirstScreenState extends State<FirstScreen> {
                     backgroundColor: Colors.transparent,
                     floating: false,
                     pinned: false,
-                    flexibleSpace: const FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Flutter",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Press",
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                    title: Image.asset(
+                      'assets/news_summary_banner.png',
+                      height: 40,
                     ),
                   ),
                   SliverToBoxAdapter(

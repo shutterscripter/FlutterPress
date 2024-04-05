@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/model/article_model.dart';
 import 'package:news_app/services/api_services.dart';
+import 'package:news_app/utils/color_utils.dart';
 
 class CategoryNewsScreen extends StatefulWidget {
   String name;
@@ -38,7 +40,7 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
           centerTitle: true,
           //add back button
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+            icon: Icon(Icons.arrow_back_ios, color: ColorUtils().purple),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -47,20 +49,18 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
           elevation: 0,
           title: Row(
             children: [
-              const Text(
-                "Flutter",
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              Image.asset(
+                'assets/news_summary_banner.png',
+                height: 40,
               ),
-              const Text(
-                "Press",
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                " - ${widget.name}",
-                style: const TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold),
+              Expanded(
+                child: Text(
+                  " - ${widget.name}",
+                  style: TextStyle(
+                    color: ColorUtils().purple,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

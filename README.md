@@ -33,3 +33,9 @@ A Flutter-based news app that allows users to read the latest news articles from
    cd FlutterPress
 
    flutter run 
+```
+
+
+### Future Requirements
+- [ ]  New UI
+  

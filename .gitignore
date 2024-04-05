@@ -44,4 +44,4 @@ app.*.map.json
 /android/app/release
 
 #consts
-lib/consts.dart
+/lib/consts.dart
