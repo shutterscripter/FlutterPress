@@ -1,11 +1,11 @@
 // ignore: avoid_print
 import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_app/consts.dart';
 
 class FirstScreenController extends GetxController {
+  
   Future<String?> summarizeText(myText, howToSummarize) async {
     // ignore: avoid_print
     print("requesting to summarize text...");

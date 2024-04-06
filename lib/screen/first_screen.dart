@@ -8,6 +8,7 @@ import 'package:news_app/model/article_model.dart';
 import 'package:news_app/model/category_model.dart';
 import 'package:news_app/screen/category_news_screen.dart';
 import 'package:news_app/screen/fav_news.dart';
+import 'package:news_app/screen/settings_screen.dart';
 import 'package:news_app/services/api_services.dart';
 import 'package:news_app/services/data.dart';
 import 'package:news_app/utils/color_utils.dart';
@@ -49,11 +50,13 @@ class _FirstScreenState extends State<FirstScreen> {
                     actions: [
                       IconButton(
                         onPressed: () {
-                          //navigate to fav news screen
-                          Get.to(FavNews(), transition: Transition.rightToLeft);
+                          ///navigate to settings screen
+                          Get.to(SettingsScreen(),
+                              transition: Transition.rightToLeft);
                         },
                         icon: Icon(
-                          Icons.favorite_rounded,
+                          Icons.menu_rounded,
+                          size: 30,
                           color: ColorUtils().purple,
                         ),
                       ),

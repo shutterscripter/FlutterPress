@@ -160,6 +160,20 @@ class _BlogTileState extends State<BlogTile> {
   }
 
   Future<void> summarizeArticle() async {
+    // show circular progress indicator
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 100,
+          width: 100,
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+
     var summarizedArticle = await _firstScreenController.summarizeText(
         widget.desc,
         "summarize this news article in ${widget.desc.length * 0.30} words");
@@ -171,6 +185,7 @@ class _BlogTileState extends State<BlogTile> {
       imageUrl: widget.imageUrl,
       publishedAt: widget.publishedAt,
     );
+    Get.back();
     Get.to(SummarizedArticleScreen(articleModel: articleModel));
   }
 }
