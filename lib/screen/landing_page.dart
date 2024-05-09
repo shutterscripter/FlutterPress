@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:news_app/components/permission_controller.dart';
 import 'package:news_app/screen/first_screen.dart';
-import 'package:news_app/screen/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LandingPage extends StatelessWidget {
+class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
+  PermissionController _permissionController = Get.put(PermissionController());
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +72,18 @@ class LandingPage extends StatelessWidget {
                       ),
                       onPressed: () async {
                         // Set the flag to indicate that the landing page has been shown
-                        SharedPreferences prefs = await SharedPreferences
-                            .getInstance();
-                        prefs.setBool('firstLaunch', false);
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.setBool('firstLaunch', false);
+
+                        ///Get Location
+                        await _permissionController
+                            .checkLocationPermissionAndGrant();
 
                         // Navigate to the main screen
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const FirstScreen()),
+                        Get.off(
+                          FirstScreen(),
+                          transition: Transition.rightToLeft,
                         );
                       },
                       child: const Text("Get Started"),
@@ -116,12 +128,10 @@ class LandingPage extends StatelessWidget {
                   ],
                 ),
               ],
-            ),)
-          ,
-        ]
-        ,
-      )
-      ,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

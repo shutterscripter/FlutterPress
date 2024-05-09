@@ -5,7 +5,6 @@ import 'package:news_app/controller/theme_support.dart';
 import 'package:news_app/dependency_injection.dart';
 import 'package:news_app/screen/first_screen.dart';
 import 'package:news_app/screen/landing_page.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -43,7 +42,8 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeSupport.lightTheme,
       darkTheme: ThemeSupport.darkTheme,
       themeMode: ThemeMode.light,
-      home: widget.isFirstLaunch ? const LandingPage() : const FirstScreen(),
+      // home: widget.isFirstLaunch ? const LandingPage() : const FirstScreen(),
+      home:  const LandingPage() ,
     );
   }
 }

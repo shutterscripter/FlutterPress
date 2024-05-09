@@ -36,12 +36,16 @@ class _SummarizedArticleScreenState extends State<SummarizedArticleScreen> {
                 children: [
                   //image
                   Container(
-                    height: Get.height * 0.28,
+                    height: Get.height * 0.35,
                     width: double.infinity,
                     decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
                       image: DecorationImage(
                         image: NetworkImage(widget.articleModel.imageUrl ?? ""),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),

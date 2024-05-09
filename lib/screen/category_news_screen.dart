@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/model/article_model.dart';
@@ -42,7 +44,7 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios, color: ColorUtils().purple),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
           backgroundColor: Colors.transparent,
