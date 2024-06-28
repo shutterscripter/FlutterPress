@@ -42,8 +42,8 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeSupport.lightTheme,
       darkTheme: ThemeSupport.darkTheme,
       themeMode: ThemeMode.light,
-      // home: widget.isFirstLaunch ? const LandingPage() : const FirstScreen(),
-      home:  const LandingPage() ,
+      home: widget.isFirstLaunch ? const LandingPage() : const FirstScreen(),
+      // home:  const LandingPage() ,
     );
   }
 }

@@ -77,8 +77,8 @@ class _LandingPageState extends State<LandingPage> {
                         await prefs.setBool('firstLaunch', false);
 
                         ///Get Location
-                        await _permissionController
-                            .checkLocationPermissionAndGrant();
+                        // await _permissionController
+                        //     .checkLocationPermissionAndGrant();
 
                         // Navigate to the main screen
                         Get.off(
