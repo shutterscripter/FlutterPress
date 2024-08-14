@@ -1,11 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:news_app/app/home/home_screen_controller.dart';
 import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/components/category_tile.dart';
-import 'package:news_app/model/article_model.dart';
-import 'package:news_app/model/category_model.dart';
+import 'package:news_app/constants/image_constants.dart';
 import 'package:news_app/screen/category_news_screen.dart';
 import 'package:news_app/services/api_services.dart';
 import 'package:news_app/services/data.dart';
@@ -30,9 +32,37 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("Rebuilding FirstScreen");
-    return SafeArea(
-      child: GetBuilder<HomeScreenController>(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        leading: Image.asset(ImageConstants.menuIcon),
+        title: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'News',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.sp,
+                ),
+              ),
+              Text(
+                'App',
+                style: TextStyle(
+                  fontWeight: FontWeight.w200,
+                  color: Colors.black,
+                  fontSize: 18.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: GetBuilder<HomeScreenController>(
         builder: (value) => _homeScreenController.loading
             ? LiquidPullToRefresh(
                 color: Colors.grey,

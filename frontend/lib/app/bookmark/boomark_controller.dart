@@ -3,9 +3,9 @@ import 'package:hive/hive.dart';
 
 class BookmarkController extends GetxController {
   var isBookmarked = false.obs;
+  final box = Hive.box('MyNews');
 
   void toggleBookmark(String url, Map<String, dynamic> articleData) async {
-    final box = Hive.box('MyNews');
     if (box.containsKey(url)) {
       await box.delete(url);
       isBookmarked.value = false;
@@ -14,4 +14,5 @@ class BookmarkController extends GetxController {
       isBookmarked.value = true;
     }
   }
+
 }

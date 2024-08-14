@@ -48,6 +48,7 @@ dependencies:
   flutter_screenutil: ^5.9.0
   iconsax: ^0.0.8
   auto_size_text: ^3.0.0
+  scroll_to_hide: ^2.1.0
   flutter_cache_manager: ^3.3.2
 
 dev_dependencies:

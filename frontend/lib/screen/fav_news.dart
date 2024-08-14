@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/screen/article_view.dart';
 
 class FavNews extends StatefulWidget {
@@ -24,28 +27,60 @@ class _FavNewsState extends State<FavNews> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        //add back button
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Row(
-          children: [
-            Text(
-              "Favourite",
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "Press",
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-            ),
-          ],
+        title: Text(
+          "Bookmarks",
+          style: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        actions: [
+          //info button telling user how to remove the article
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(
+                      "Remove an article",
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    content: Text(
+                      "Swipe left on an article to remove it from the list",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "OK",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(
+              Icons.info,
+              size: 20.sp,
+            ),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: list.length,
@@ -63,35 +98,37 @@ class _FavNewsState extends State<FavNews> {
                 ),
               );
             },
-            child: Material(
-              elevation: 3.0,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ListTile(
-                  title: Text(
-                    list[index]['title'],
-                    maxLines: 2,
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
+            child: Dismissible(
+              background: Container(
+                color: Colors.red,
+                child: Center(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "Remove",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                      ),
                     ),
                   ),
-                  subtitle: Text(
-                    list[index]['desc'],
-                    maxLines: 2,
-                  ),
-                  trailing: IconButton(
-                    onPressed: () {
-                      //delete the news from the list
-                      _box.deleteAt(index);
-                      //update the UI
-                      setState(() {
-                        getData();
-                      });
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
                 ),
+              ),
+              key: Key(list[index]['title']),
+              direction: DismissDirection.endToStart,
+              onDismissed: (direction) {
+                //remove the article from the list
+                _box.deleteAt(index);
+                getData();
+              },
+              child: BlogTile(
+                imageUrl: list[index]['urlToImage'] ?? '',
+                title: list[index]['title'] ?? '',
+                desc: list[index]['desc'] ?? '',
+                url: list[index]['url'] ?? '',
+                publishedAt: list[index]['publishedAt'] ?? '',
+                source: list[index]['source'] ?? '',
+                author: list[index]['author'] ?? '',
               ),
             ),
           );
@@ -103,5 +140,6 @@ class _FavNewsState extends State<FavNews> {
   void getData() {
     //get all the data and store it in a list
     list = _box.values.toList();
+    setState(() {});
   }
 }

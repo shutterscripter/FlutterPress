@@ -1,10 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:news_app/app/bookmark/boomark_controller.dart';
 import 'package:news_app/model/article_model.dart';
 import 'package:news_app/screen/article_view.dart';
+import 'package:scroll_to_hide/scroll_to_hide.dart';
 
 class SummarizedArticleScreen extends StatefulWidget {
   final ArticleModel articleModel;
@@ -17,6 +21,16 @@ class SummarizedArticleScreen extends StatefulWidget {
 }
 
 class _SummarizedArticleScreenState extends State<SummarizedArticleScreen> {
+  bool isBottomBarVisible = false;
+  final ScrollController _scrollController = ScrollController();
+  final BookmarkController _bookmarkController = Get.put(BookmarkController());
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SwipeDetector(
@@ -33,6 +47,7 @@ class _SummarizedArticleScreenState extends State<SummarizedArticleScreen> {
         body: Stack(
           children: [
             SingleChildScrollView(
+              controller: _scrollController,
               child: Stack(
                 children: [
                   Column(
@@ -173,44 +188,75 @@ class _SummarizedArticleScreenState extends State<SummarizedArticleScreen> {
                 ],
               ),
             ),
-            Positioned(
-              bottom: 20.h,
-              right: 100.w,
-              left: 100.w,
-              height: 50.w,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Iconsax.bookmark,
-                        color: Colors.grey,
-                        size: 25.sp,
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: ScrollToHide(
+                height: 50.h,
+                scrollController: _scrollController,
+                hideDirection: Axis.vertical,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30.r),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 10,
+                        spreadRadius: 1,
                       ),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Iconsax.share,
-                        color: Colors.grey,
-                        size: 25.sp,
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.w, right: 2.w),
+                        child: IconButton(
+                          icon: Icon(
+                            Iconsax.bookmark,
+                            color: Colors.grey,
+                            size: 25.sp,
+                          ),
+                          onPressed: () {
+                            /// bookmark the article
+                            Map<String, dynamic> articleData = {
+                              'urlToImage': widget.articleModel.imageUrl,
+                              'title': widget.articleModel.title,
+                              'desc': widget.articleModel.description,
+                              'url': widget.articleModel.url,
+                              'publishedAt': widget.articleModel.publishedAt,
+                              'source': widget.articleModel.source,
+                              'author': widget.articleModel.author,
+                            };
+                            _bookmarkController.toggleBookmark(
+                                widget.articleModel.title ?? "", articleData);
+
+                            SnackBar snackBar = SnackBar(
+                              content: Text(
+                                _bookmarkController.isBookmarked.value
+                                    ? "Article bookmarked"
+                                    : "Article removed from bookmarks",
+                              ),
+                              duration: Duration(seconds: 1),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          },
+                        ),
                       ),
-                      onPressed: () {},
-                    ),
-                  ],
+                      Padding(
+                        padding: EdgeInsets.only(right: 10.w, left: 2.w),
+                        child: IconButton(
+                          icon: Icon(
+                            Iconsax.share,
+                            color: Colors.grey,
+                            size: 25.sp,
+                          ),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

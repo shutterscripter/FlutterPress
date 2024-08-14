@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/model/article_model.dart';
@@ -40,29 +42,20 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
           centerTitle: true,
           //add back button
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: ColorUtils().purple),
+            icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Row(
-            children: [
-              Image.asset(
-                'assets/news_summary_banner.png',
-                height: 40,
-              ),
-              Expanded(
-                child: Text(
-                  " - ${widget.name}",
-                  style: TextStyle(
-                    color: ColorUtils().purple,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+          title: Text(
+            "${widget.name}",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18.sp,
+            ),
           ),
         ),
         body: _loading
@@ -99,7 +92,7 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
     ApiService client = ApiService();
     await client.getArticleByCategory(widget.name.toLowerCase());
     categoryArticleList = client.categoryArticleList;
-
+    print("Category Article List: $categoryArticleList");
     setState(() {
       _loading = true;
     });
