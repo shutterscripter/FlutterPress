@@ -23,21 +23,22 @@ class _BottomNavHomeScreenState extends State<BottomNavHomeScreen> {
       extendBody: true,
       bottomNavigationBar: Obx(
         () => NavigationBar(
-          backgroundColor: Colors.white,
-          height: 70,
+          backgroundColor: Theme.of(context).canvasColor,
+          surfaceTintColor: Theme.of(context).canvasColor,
+          indicatorColor: Theme.of(context).primaryColor.withValues(alpha: 0.4),
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-          elevation: 3,
-
+          elevation: 1,
           selectedIndex: navigationController.selectedIndex.value,
           onDestinationSelected: (int index) =>
               navigationController.selectedIndex.value = index,
           destinations: [
             NavigationDestination(
-                icon: Icon(
-                  Iconsax.home,
-                  size: 20,
-                ),
-                label: 'Home'),
+              icon: Icon(
+                Iconsax.home,
+                size: 20,
+              ),
+              label: 'Home',
+            ),
             NavigationDestination(
                 icon: Icon(
                   Iconsax.bookmark,
@@ -50,12 +51,6 @@ class _BottomNavHomeScreenState extends State<BottomNavHomeScreen> {
                   size: 20,
                 ),
                 label: 'Search'),
-            NavigationDestination(
-                icon: Icon(
-                  Iconsax.notification,
-                  size: 20,
-                ),
-                label: 'Notification'),
             NavigationDestination(
                 icon: Icon(
                   Iconsax.setting,
@@ -77,8 +72,6 @@ class NavigationController extends GetxController {
     FirstScreen(),
     FavNews(),
     Container(color: Colors.blue),
-    Container(color: Colors.yellow),
     SettingsScreen()
-
   ];
 }

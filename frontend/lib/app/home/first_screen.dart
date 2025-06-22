@@ -34,9 +34,6 @@ class _FirstScreenState extends State<FirstScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        leading: Image.asset(ImageConstants.menuIcon),
         title: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +41,6 @@ class _FirstScreenState extends State<FirstScreen> {
               Text(
                 'News',
                 style: TextStyle(
-                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 18.sp,
                 ),
@@ -53,7 +49,6 @@ class _FirstScreenState extends State<FirstScreen> {
                 'App',
                 style: TextStyle(
                   fontWeight: FontWeight.w200,
-                  color: Colors.black,
                   fontSize: 18.sp,
                 ),
               ),
@@ -65,9 +60,7 @@ class _FirstScreenState extends State<FirstScreen> {
       body: GetBuilder<HomeScreenController>(
         builder: (value) => _homeScreenController.loading
             ? LiquidPullToRefresh(
-                color: Colors.grey,
                 height: 300,
-                backgroundColor: Colors.white,
                 showChildOpacityTransition: false,
                 onRefresh: () async {
                   await getData();
@@ -76,23 +69,20 @@ class _FirstScreenState extends State<FirstScreen> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        height: 80,
+                        margin: EdgeInsets.only(top: 10.h),
+                        height: 80.h,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: _homeScreenController.categories.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CategoryNewsScreen(
-                                        name: _homeScreenController
-                                                .categories[index]
-                                                .categoryName ??
-                                            ''),
-                                  ),
+                                Get.to(
+                                  () => CategoryNewsScreen(
+                                      name: _homeScreenController
+                                              .categories[index].categoryName ??
+                                          ''),
+                                  transition: Transition.native,
                                 );
                               },
                               child: CategoryTile(
@@ -116,7 +106,7 @@ class _FirstScreenState extends State<FirstScreen> {
                                 '',
                             imageUrl: _homeScreenController
                                     .articleList[index].imageUrl ??
-                                'https://www.brasscraft.com/wp-content/uploads/2017/01/no-image-available.png',
+                                '404',
                             title: _homeScreenController
                                     .articleList[index].title ??
                                 '',

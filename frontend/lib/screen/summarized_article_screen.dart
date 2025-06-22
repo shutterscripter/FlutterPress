@@ -9,6 +9,7 @@ import 'package:news_app/app/bookmark/boomark_controller.dart';
 import 'package:news_app/model/article_model.dart';
 import 'package:news_app/screen/article_view.dart';
 import 'package:scroll_to_hide/scroll_to_hide.dart';
+import 'package:news_app/components/custom_snackbar.dart';
 
 class SummarizedArticleScreen extends StatefulWidget {
   final ArticleModel articleModel;
@@ -44,215 +45,261 @@ class _SummarizedArticleScreenState extends State<SummarizedArticleScreen> {
         );
       },
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           children: [
-            SingleChildScrollView(
+            // Main Content
+            CustomScrollView(
               controller: _scrollController,
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      //image
-                      Container(
-                        height: Get.height * 0.30.h,
-                        width: double.infinity,
+              slivers: [
+                // App Bar with Image
+                SliverAppBar(
+                  expandedHeight: Get.height * 0.35,
+                  floating: false,
+                  pinned: true,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  elevation: 0,
+                  leading: Container(
+                    margin: EdgeInsets.only(left: 16.w, top: 8.h),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_rounded,
+                        color: Colors.white,
+                        size: 20.sp,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(24.r),
+                          bottomRight: Radius.circular(24.r),
+                        ),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            widget.articleModel.imageUrl ?? "",
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20.r),
-                            bottomRight: Radius.circular(20.r),
+                            bottomLeft: Radius.circular(24.r),
+                            bottomRight: Radius.circular(24.r),
                           ),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                widget.articleModel.imageUrl ?? ""),
-                            fit: BoxFit.cover,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: 20.0.h,
-                          left: 30.0.w,
-                          right: 30.0.w,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Author
-                            Text(
-                              '${widget.articleModel.author ?? 'Unknown'}',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                            SizedBox(height: 5.h),
-                            //title
-                            Text(
-                              widget.articleModel.title ?? 'No Title',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 22.sp,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-
-                            //published date
-                            Text(
-                              DateTime.parse(
-                                          widget.articleModel.publishedAt ?? "")
-                                      .toString()
-                                      .substring(0, 10) +
-                                  " " +
-                                  DateTime.parse(
-                                          widget.articleModel.publishedAt ?? "")
-                                      .toString()
-                                      .substring(11, 16),
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 0.5,
-                              height: 40.h,
-                            ),
-
-                            /// summarized content
-                            Text(
-                              widget.articleModel.description ??
-                                  'No description',
-                              style: TextStyle(
-                                fontSize: 18.sp,
-                                wordSpacing: 1,
-                                letterSpacing: 1.5,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
-                            ),
-
-                            ///swipe left to view full article
-                            Container(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 10.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Swipe left to view full article",
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w200,
-                                      ),
-                                    ),
-                                    SizedBox(width: 5.w),
-                                    Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      size: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  // back button
-                  Positioned(
-                    top: 40.h,
-                    left: 20.w,
-                    child: GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Color(0xff141E28),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back_ios_rounded,
-                          color: Colors.white,
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+
+                // Article Content
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        Text(
+                          widget.articleModel.title ?? 'No Title',
+                          style: TextStyle(
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.w800,
+                            height: 1.3,
+                            color: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.color,
+                          ),
+                        ),
+
+                        SizedBox(height: 16.h),
+
+                        // Author and Date Row
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.person_outline,
+                              size: 16.sp,
+                              color: Colors.grey[600],
+                            ),
+                            SizedBox(width: 8.w),
+                            Expanded(
+                              child: Text(
+                                widget.articleModel.author ?? 'Unknown Author',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.access_time,
+                              size: 16.sp,
+                              color: Colors.grey[600],
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              _formatDate(
+                                  widget.articleModel.publishedAt ?? ""),
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 24.h),
+
+                        // Divider
+                        Container(
+                          height: 1,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                Colors.grey.withOpacity(0.3),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 10.h),
+
+                        // Summarized Content
+                        Container(
+                          padding: EdgeInsets.all(20.w),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            widget.articleModel.description ??
+                                'No description available',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              height: 1.3,
+                              fontWeight: FontWeight.w400,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                        ),
+
+
+
+                        
+                        SizedBox(height: 150.h), // Space for bottom bar
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
+
+            // Bottom Action Bar
             Align(
               alignment: Alignment.bottomCenter,
               child: ScrollToHide(
-                height: 50.h,
+                height: 80.h,
                 scrollController: _scrollController,
                 hideDirection: Axis.vertical,
                 child: Container(
+                  margin: EdgeInsets.only(
+                    bottom: 50.h,
+                    left: 30.w,
+                    right: 30.w,
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.r),
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(25.r),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.shade300,
-                        blurRadius: 10,
-                        spreadRadius: 1,
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: Offset(0, 8),
                       ),
                     ],
                   ),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.w, right: 2.w),
-                        child: IconButton(
-                          icon: Icon(
-                            Iconsax.bookmark,
-                            color: Colors.grey,
-                            size: 25.sp,
-                          ),
-                          onPressed: () {
-                            /// bookmark the article
-                            Map<String, dynamic> articleData = {
-                              'urlToImage': widget.articleModel.imageUrl,
-                              'title': widget.articleModel.title,
-                              'desc': widget.articleModel.description,
-                              'url': widget.articleModel.url,
-                              'publishedAt': widget.articleModel.publishedAt,
-                              'source': widget.articleModel.source,
-                              'author': widget.articleModel.author,
-                            };
-                            _bookmarkController.toggleBookmark(
-                                widget.articleModel.title ?? "", articleData);
-
-                            SnackBar snackBar = SnackBar(
-                              content: Text(
-                                _bookmarkController.isBookmarked.value
-                                    ? "Article bookmarked"
-                                    : "Article removed from bookmarks",
-                              ),
-                              duration: Duration(seconds: 1),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          },
-                        ),
+                      // Bookmark Button
+                      _buildActionButton(
+                        icon: Iconsax.bookmark,
+                        label: 'Bookmark',
+                        isActive: _bookmarkController.isBookmarked.value,
+                        onTap: () => _handleBookmark(),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 10.w, left: 2.w),
-                        child: IconButton(
-                          icon: Icon(
-                            Iconsax.share,
-                            color: Colors.grey,
-                            size: 25.sp,
+
+                      // Share Button
+                      _buildActionButton(
+                        icon: Iconsax.share,
+                        label: 'Share',
+                        onTap: () => _handleShare(),
+                      ),
+
+                      // Read Full Article Button
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 16.w),
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Get.to(
+                                ArticleView(
+                                  url: widget.articleModel.url ?? "",
+                                  desc: widget.articleModel.description ?? "",
+                                ),
+                                transition: Transition.rightToLeft,
+                              );
+                            },
+                            icon: Icon(Icons.article, size: 18.sp),
+                            label: Text(
+                              'Read Full',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 12.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                            ),
                           ),
-                          onPressed: () {},
                         ),
                       ),
                     ],
@@ -264,5 +311,86 @@ class _SummarizedArticleScreenState extends State<SummarizedArticleScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    bool isActive = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isActive
+              ? Theme.of(context).primaryColor.withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color:
+                  isActive ? Theme.of(context).primaryColor : Colors.grey[600],
+              size: 22.sp,
+            ),
+            SizedBox(height: 4.h),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w500,
+                color: isActive
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleBookmark() {
+    Map<String, dynamic> articleData = {
+      'urlToImage': widget.articleModel.imageUrl,
+      'title': widget.articleModel.title,
+      'desc': widget.articleModel.description,
+      'url': widget.articleModel.url,
+      'publishedAt': widget.articleModel.publishedAt,
+      'source': widget.articleModel.source,
+      'author': widget.articleModel.author,
+    };
+
+    _bookmarkController.toggleBookmark(
+        widget.articleModel.title ?? "", articleData);
+
+    CustomSnackBar.showSuccess(
+      context: context,
+      message: _bookmarkController.isBookmarked.value
+          ? "Article bookmarked successfully!"
+          : "Article removed from bookmarks",
+    );
+  }
+
+  void _handleShare() {
+    // TODO: Implement share functionality
+    CustomSnackBar.showInfo(
+      context: context,
+      message: "Share feature coming soon!",
+    );
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      DateTime date = DateTime.parse(dateString);
+      return "${date.day}/${date.month}/${date.year}";
+    } catch (e) {
+      return "Unknown date";
+    }
   }
 }

@@ -14,19 +14,15 @@ class SummarizeController extends GetxController {
     // show circular progress indicator
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevent dismiss by tapping outside
       builder: (BuildContext context) {
-        return Container(
-          height: 100,
-          width: 100,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+        return const Center(
+          child: CircularProgressIndicator(),
         );
       },
     );
 
-    var summarizedArticle = await _homeScreenController.summarizeText(
-        desc, "summarize this news article in ${desc.length * 0.30} words");
+    var summarizedArticle = await _homeScreenController.summarizeNews(desc);
 
     ArticleModel articleModel = ArticleModel(
       title: title,
@@ -36,8 +32,14 @@ class SummarizeController extends GetxController {
       publishedAt: publishedAt,
       author: author,
     );
-    Get.back();
-    Get.to(SummarizedArticleScreen(articleModel: articleModel),
-        transition: Transition.zoom);
+
+    // Dismiss the dialog using Navigator.pop(context)
+    Navigator.of(context, rootNavigator: true).pop();
+
+    // Now navigate to the summarized article screen
+    Get.to(
+      SummarizedArticleScreen(articleModel: articleModel),
+      transition: Transition.native,
+    );
   }
 }

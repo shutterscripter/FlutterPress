@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:news_app/app/bookmark/boomark_controller.dart';
 import 'package:news_app/app/home/home_screen_controller.dart';
+import 'package:news_app/constants/image_constants.dart';
 import 'package:news_app/core/summarization/summarize_controller.dart';
 import 'package:news_app/model/article_model.dart';
 import 'package:hive/hive.dart';
@@ -76,10 +77,18 @@ class _BlogTileState extends State<BlogTile> {
             // Article Image
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: CachedNetworkImage(
+              child:
+              widget.imageUrl=='404'?
+              Image.asset(
+                ImageConstants.defaultNewsImage,
+                height: 80.h,
+                width: 90.w,
+                fit: BoxFit.cover,
+              ):
+              CachedNetworkImage(
                 imageUrl: widget.imageUrl,
-                height: 90.h,
-                width: 95.w,
+                height: 80.h,
+                width: 90.w,
                 fit: BoxFit.cover,
               ),
             ),
@@ -92,8 +101,8 @@ class _BlogTileState extends State<BlogTile> {
                   Text(
                     '${widget.source}',
                     style: TextStyle(
-                      color: Colors.grey,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.4),
                       fontSize: 12.sp,
                     ),
                   ),
@@ -105,7 +114,6 @@ class _BlogTileState extends State<BlogTile> {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 17.sp,
                       ),

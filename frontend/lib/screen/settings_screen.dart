@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:news_app/app/auth/auth_controller.dart';
+import 'package:news_app/app/auth/login_screen.dart';
 import 'package:news_app/screen/fav_news.dart';
 import 'package:news_app/utils/color_utils.dart';
 
@@ -120,7 +122,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
             ),
-            Spacer(),
+            Divider(
+              height: 20,
+              endIndent: 20,
+              indent: 20,
+              color: Colors.grey,
+            ),
+            ListTile(
+              onTap: () {
+                // Log out logic
+                final authController = Get.put(AuthController());
+                authController.logout();
+                Get.offAll(()=> LoginScreen(), transition: Transition.rightToLeft);
+              },
+              title: const Text(
+                'Log Out',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios),
+            ),
             Text(
               'Version 1.0.0',
               style: TextStyle(
@@ -128,41 +151,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: Colors.grey,
               ),
             ),
-            //made with love
-            Padding(
-              padding: EdgeInsets.only(top: 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Made with ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  Icon(
-                    Icons.favorite,
-                    size: 13,
-                    color: Colors.red,
-                  ),
-                  Text(
-                    ' by ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  Text(
-                    'Shutter Scripter',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+
+
           ],
         ),
       ),
