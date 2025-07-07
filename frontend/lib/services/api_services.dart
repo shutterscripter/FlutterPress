@@ -1,9 +1,16 @@
+import 'package:get/get.dart';
 import 'package:news_app/model/article_model.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:news_app/screen/bottom_nav_home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ApiService {
+import '../app/auth/login_screen.dart';
+
+class ApiService extends GetxController {
+  bool loading = false;
   final cache = DefaultCacheManager();
   List<ArticleModel> articleList = [];
   List<ArticleModel> categoryArticleList = [];
@@ -50,6 +57,7 @@ class ApiService {
   }
 
   Future<void> getArticleByCategory(String category) async {
+    loading = true;
     var catRes =
         await cache.getFileFromCache('category_article_list_$category');
 
@@ -64,9 +72,10 @@ class ApiService {
       }
     } else {
       String url =
-          "https://newsapi.org/v2/top-headlines?country=in&language=en&category=$category&apiKey=465d0a5e15194833bee830c9366ebe72";
+          "https://newsapi.org/v2/top-headlines?language=en&category=$category&apiKey=465d0a5e15194833bee830c9366ebe72";
       var res = await http.get(Uri.parse(url));
       var jsonData = jsonDecode(res.body);
+
       if (jsonData['status'] == 'ok') {
         jsonData['articles'].forEach((element) {
           if (element['url'] != null && element['description'] != null) {
@@ -79,10 +88,12 @@ class ApiService {
               publishedAt: element['publishedAt'],
               content: element['content'],
             );
-            cache.putFile('category_article_list_$category', res.bodyBytes);
             categoryArticleList.add(articleModel);
           }
         });
+        cache.putFile('category_article_list_$category', res.bodyBytes);
+        loading = false;
+        update();
       }
     }
   }
@@ -108,6 +119,38 @@ class ApiService {
           searchArticleList.add(articleModel);
         }
       });
+    }
+  }
+
+  Future<void> clearCache() async {
+    await cache.emptyCache();
+    articleList.clear();
+    categoryArticleList.clear();
+    searchArticleList.clear();
+    update();
+  }
+
+  Future<bool> checkToken() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('access_token');
+      String? tokenType = prefs.getString('token_type');
+
+      var url = Uri.parse('http://localhost:8000/auth/health');
+      final response = await http.get(url, headers: {
+        'Authorization': '$tokenType $token',
+        'Content-Type': 'application/json',
+      });
+      if (response.statusCode == 200) {
+        print('Token is valid');
+        return true;
+      } else {
+        print('Token is invalid');
+        return false;
+      }
+    } catch (e) {
+      print('Error checking token: $e');
+      return false;
     }
   }
 }

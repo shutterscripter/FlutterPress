@@ -45,12 +45,7 @@ class _BottomNavHomeScreenState extends State<BottomNavHomeScreen> {
                   size: 20,
                 ),
                 label: 'Bookmark'),
-            NavigationDestination(
-                icon: Icon(
-                  Iconsax.search_normal,
-                  size: 20,
-                ),
-                label: 'Search'),
+
             NavigationDestination(
                 icon: Icon(
                   Iconsax.setting,
@@ -71,7 +66,6 @@ class NavigationController extends GetxController {
   final screens = [
     FirstScreen(),
     FavNews(),
-    Container(color: Colors.blue),
     SettingsScreen()
   ];
 }

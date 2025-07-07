@@ -57,14 +57,18 @@ class HomeScreenController extends GetxController {
   Future<String?> summarizeNews(String newsArticle) async {
     try {
       // Show loading snackbar
-      CustomSnackBar.showLoading(
-          context: Get.context!, message: 'Summarizing article...');
+      // CustomSnackBar.showLoading(
+      //     context: Get.context!, message: 'Summarizing article...');
 
       // Get authorization headers
       Map<String, String> headers = await _authController.getAuthHeaders();
 
       // Prepare request body
-      var requestBody = {'text': newsArticle};
+      var requestBody = {
+        'text': newsArticle,
+        "max_length": newsArticle.length/2,
+        "min_length": newsArticle.length/4
+      };
 
       // Make API call
       var response = await http.post(
@@ -74,7 +78,7 @@ class HomeScreenController extends GetxController {
       );
 
       // Hide loading snackbar
-      CustomSnackBar.hideCurrent(Get.context!);
+      //CustomSnackBar.hideCurrent(Get.context!);
 
       print('Response: ${response.body}');
       if (response.statusCode == 200) {

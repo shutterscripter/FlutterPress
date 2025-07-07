@@ -18,33 +18,24 @@ class CategoryNewsScreen extends StatefulWidget {
 }
 
 class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
-  List<ArticleModel> categoryArticleList = [];
-  bool _loading = false;
+  final apiService = Get.put(ApiService());
 
   @override
   void initState() {
     super.initState();
-    getArticleByCat();
+    apiService.getArticleByCategory(widget.name.toLowerCase());
   }
 
   @override
   Widget build(BuildContext context) {
-    return LiquidPullToRefresh(
-      color: Colors.grey,
-      height: 300,
-      backgroundColor: Colors.white,
-      showChildOpacityTransition: false,
-      onRefresh: () async {
-        await getArticleByCat();
-      },
-      child: Scaffold(
+    return GetBuilder<ApiService>(
+      builder: (controller) => Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          //add back button
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
-              Get.back();
+              Navigator.pop(context);
             },
           ),
           backgroundColor: Colors.transparent,
@@ -52,49 +43,37 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
           title: Text(
             "${widget.name}",
             style: TextStyle(
-              color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: 18.sp,
+              fontSize: 20.sp,
             ),
           ),
         ),
-        body: _loading
-            ? ListView.builder(
-                itemCount: categoryArticleList.length,
-                itemBuilder: (context, index) {
-                  if (categoryArticleList[index].imageUrl == null ||
-                      categoryArticleList[index].title == null ||
-                      categoryArticleList[index].description == null) {
-                    // If any of the required fields is null, return an empty container
-                    return Container();
-                  }
-
-                  return BlogTile(
-                    source: categoryArticleList[index].source ?? "No Source",
-                    imageUrl: categoryArticleList[index].imageUrl ?? '',
-                    title: categoryArticleList[index].title ?? "No Title",
-                    desc: categoryArticleList[index].description ??
-                        "No Description",
-                    url: categoryArticleList[index].url!,
-                    publishedAt: categoryArticleList[index].publishedAt ?? '',
-                    author: categoryArticleList[index].author ?? "No Author",
-                  );
-                },
-              )
-            : const Center(
-                child: CircularProgressIndicator(),
+        body: controller.loading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: ListView.builder(
+                  itemCount: controller.categoryArticleList.length,
+                  itemBuilder: (context, index) {
+                    final article = controller.categoryArticleList[index];
+                    if (article.imageUrl == null ||
+                        article.title == null ||
+                        article.description == null) {
+                      return Container();
+                    }
+                    return BlogTile(
+                      source: article.source ?? "No Source",
+                      imageUrl: article.imageUrl ?? '',
+                      title: article.title ?? "No Title",
+                      desc: article.description ?? "No Description",
+                      url: article.url ?? '',
+                      publishedAt: article.publishedAt ?? '',
+                      author: article.author ?? "No Author",
+                    );
+                  },
+                ),
               ),
       ),
     );
-  }
-
-  Future<void> getArticleByCat() async {
-    ApiService client = ApiService();
-    await client.getArticleByCategory(widget.name.toLowerCase());
-    categoryArticleList = client.categoryArticleList;
-    print("Category Article List: $categoryArticleList");
-    setState(() {
-      _loading = true;
-    });
   }
 }

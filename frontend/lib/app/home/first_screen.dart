@@ -7,7 +7,6 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:news_app/app/home/home_screen_controller.dart';
 import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/components/category_tile.dart';
-import 'package:news_app/constants/image_constants.dart';
 import 'package:news_app/screen/category_news_screen.dart';
 import 'package:news_app/services/api_services.dart';
 import 'package:news_app/services/data.dart';

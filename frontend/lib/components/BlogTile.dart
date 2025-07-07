@@ -77,23 +77,23 @@ class _BlogTileState extends State<BlogTile> {
             // Article Image
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child:
-              widget.imageUrl=='404'?
-              Image.asset(
-                ImageConstants.defaultNewsImage,
-                height: 80.h,
-                width: 90.w,
-                fit: BoxFit.cover,
-              ):
-              CachedNetworkImage(
-                imageUrl: widget.imageUrl,
-                height: 80.h,
-                width: 90.w,
-                fit: BoxFit.cover,
-              ),
+              child: widget.imageUrl == '404'
+                  ? Image.asset(
+                      ImageConstants.defaultNewsImage,
+                      height: 80.h,
+                      width: 90.w,
+                      fit: BoxFit.cover,
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: widget.imageUrl,
+                      height: 80.h,
+                      width: 90.w,
+                      fit: BoxFit.cover,
+                    ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 20.w),
+            SizedBox(width: 20.w),
+            // Make the whole text column flexible
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -102,21 +102,19 @@ class _BlogTileState extends State<BlogTile> {
                     '${widget.source}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.4),
+                      color:
+                          Theme.of(context).primaryColor.withValues(alpha: 0.4),
                       fontSize: 12.sp,
                     ),
                   ),
                   // Article Title
-                  SizedBox(
-                    width: 200.w,
-                    child: Text(
-                      widget.title,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 17.sp,
-                      ),
+                  Text(
+                    widget.title,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 17.sp,
                     ),
                   ),
                 ],

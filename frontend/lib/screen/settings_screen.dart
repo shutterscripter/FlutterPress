@@ -32,70 +32,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
-            ListTile(
-              title: const Text(
-                'Dark Mode',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: Switch(
-                value: darkMode,
-                activeColor: ColorUtils.purp,
-                inactiveThumbColor: Colors.grey,
-                onChanged: (value) {
-                  setState(() {
-                    darkMode = !darkMode;
-                  });
-                },
-              ),
-            ),
-            Divider(
-              height: 20,
-              endIndent: 20,
-              indent: 20,
-              color: Colors.grey,
-            ),
-            ListTile(
-              title: const Text(
-                'Notification',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: Switch(
-                value: false,
-                onChanged: (value) {},
-              ),
-            ),
-            Divider(
-              height: 20,
-              endIndent: 20,
-              indent: 20,
-              color: Colors.grey,
-            ),
-            ListTile(
-              onTap: () {
-                //navigate to fav news screen
-                Get.to(FavNews(), transition: Transition.rightToLeft);
-              },
-              title: const Text(
-                'Favourite News',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios),
-            ),
-            Divider(
-              height: 20,
-              endIndent: 20,
-              indent: 20,
-              color: Colors.grey,
-            ),
+
+
+
+
             ListTile(
               title: const Text(
                 'Language',

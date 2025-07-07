@@ -10,6 +10,7 @@ import 'package:news_app/controller/theme_support.dart';
 import 'package:news_app/dependency_injection.dart';
 import 'package:news_app/screen/bottom_nav_home_screen.dart';
 import 'package:news_app/screen/landing_page.dart';
+import 'package:news_app/services/api_services.dart';
 import 'package:news_app/utils/flex_color_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -87,13 +88,24 @@ class _MyAppState extends State<MyApp> {
   // Check login state
   Future<Widget> _checkLoginState() async {
     try {
+      final ApiService apiService = Get.put(ApiService());
+      final tokenValid = await apiService.checkToken();
+      print('Token valid? $tokenValid');
+      if (!tokenValid) {
+        print('Token invalid, clearing cache and logging out');
+        await DefaultCacheManager().emptyCache();
+        await _authController.logout();
+        return const LoginScreen();
+      }
+
       bool? isLoggedIn = await _authController.getLogin();
+      print('isLoggedIn: $isLoggedIn');
 
       if (isLoggedIn == true) {
-        // User is logged in - go to home
+        print('User is logged in, going to home');
         return const BottomNavHomeScreen();
       } else {
-        // User is not logged in - go to login
+        print('User is not logged in, going to login');
         return const LoginScreen();
       }
     } catch (e) {
