@@ -66,8 +66,8 @@ class HomeScreenController extends GetxController {
       // Prepare request body
       var requestBody = {
         'text': newsArticle,
-        "max_length": newsArticle.length/2,
-        "min_length": newsArticle.length/4
+        "max_length": (newsArticle.length/1.2).toInt(),
+        "min_length": (newsArticle.length/1.7).toInt()
       };
 
       // Make API call

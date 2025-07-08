@@ -100,7 +100,7 @@ class ApiService extends GetxController {
 
   Future<void> searchArticle(String keywords) async {
     String urlExplore =
-        'https://newsapi.org/v2/everything?q=$keywords&language=en&sortBy=publishedAt&apiKey=465d0a5e15194833bee830c9366ebe72';
+        'https://newsapi.org/v2/everaything?q=$keywords&language=en&sortBy=publishedAt&apiKey=465d0a5e15194833bee830c9366ebe72';
 
     var res = await http.get(Uri.parse(urlExplore));
     var jsonData = jsonDecode(res.body);

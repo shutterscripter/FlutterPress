@@ -45,3 +45,5 @@ app.*.map.json
 
 #consts
 /lib/consts.dart
+frontend/lib/constants/api_constants.dart
+/frontend/lib/constants/api_constants.dart
