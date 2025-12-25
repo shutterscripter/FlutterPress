@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:news_app/components/BlogTile.dart';
-import 'package:news_app/screen/article_view.dart';
 
 class FavNews extends StatefulWidget {
   const FavNews({super.key});
@@ -25,111 +26,145 @@ class _FavNewsState extends State<FavNews> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         title: Text(
-          "Bookmarks",
+          'Saved Stories',
           style: TextStyle(
             fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
           ),
         ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
         actions: [
-          //info button telling user how to remove the article
           IconButton(
             onPressed: () {
+              // Show info or clear all logic
               showDialog(
                 context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(
-                      "Remove an article",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                builder: (context) => AlertDialog(
+                  title: Text('Saved Articles',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  content: Text(
+                      'Swipe left on an article to remove it from your bookmarks.'),
+                  actions: [
+                    TextButton(
+                      child: Text('Understood'),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    content: Text(
-                      "Swipe left on an article to remove it from the list",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "OK",
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                  ],
+                ),
               );
             },
-            icon: Icon(
-              Icons.info,
-              size: 20.sp,
-            ),
+            icon: Icon(Iconsax.info_circle, size: 24.sp),
           ),
+          SizedBox(width: 16.w),
         ],
       ),
-      body: ListView.builder(
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              //open the article in a web view
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ArticleView(
-                    url: list[index]['url'],
-                    desc: list[index]['desc'],
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('MyNews').listenable(),
+        builder: (context, Box box, _) {
+          if (box.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Iconsax.bookmark,
+                    size: 64.sp,
+                    color: Theme.of(context).disabledColor,
                   ),
-                ),
-              );
-            },
-            child: Dismissible(
-              background: Container(
-                color: Colors.red,
-                child: Center(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "Remove",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp,
+                  SizedBox(height: 16.h),
+                  Text(
+                    'No saved articles yet',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Theme.of(context).disabledColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Tap the bookmark icon on any\narticle to save it here',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Theme.of(context).disabledColor.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          var list = box.values.toList();
+
+          return AnimationLimiter(
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 10.h, bottom: 20.h),
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                // Reverse index to show newest first
+                final reversedIndex = list.length - 1 - index;
+                final article = list[reversedIndex];
+
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  duration: const Duration(milliseconds: 375),
+                  child: SlideAnimation(
+                    verticalOffset: 50.0,
+                    child: FadeInAnimation(
+                      child: Dismissible(
+                        key: Key(article['title'] ?? DateTime.now().toString()),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.only(right: 20.w),
+                          color: Colors.redAccent,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Iconsax.trash, color: Colors.white),
+                              SizedBox(height: 4.h),
+                              Text(
+                                "Remove",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onDismissed: (direction) {
+                          box.deleteAt(reversedIndex);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Article removed from bookmarks'),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                            ),
+                          );
+                        },
+                        child: BlogTile(
+                          imageUrl: article['urlToImage'] ?? '',
+                          title: article['title'] ?? '',
+                          desc: article['desc'] ?? '',
+                          url: article['url'] ?? '',
+                          publishedAt: article['publishedAt'] ?? '',
+                          source: article['source'] ?? '',
+                          author: article['author'] ?? '',
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              key: Key(list[index]['title']),
-              direction: DismissDirection.endToStart,
-              onDismissed: (direction) {
-                //remove the article from the list
-                _box.deleteAt(index);
-                getData();
+                );
               },
-              child: BlogTile(
-                imageUrl: list[index]['urlToImage'] ?? '',
-                title: list[index]['title'] ?? '',
-                desc: list[index]['desc'] ?? '',
-                url: list[index]['url'] ?? '',
-                publishedAt: list[index]['publishedAt'] ?? '',
-                source: list[index]['source'] ?? '',
-                author: list[index]['author'] ?? '',
-              ),
             ),
           );
         },
@@ -138,8 +173,8 @@ class _FavNewsState extends State<FavNews> {
   }
 
   void getData() {
-    //get all the data and store it in a list
+    // Logic moved to ValueListenableBuilder for reactive updates
+    // Keeping this method if parent requires it, or just to satisfy override if applicable
     list = _box.values.toList();
-    setState(() {});
   }
 }

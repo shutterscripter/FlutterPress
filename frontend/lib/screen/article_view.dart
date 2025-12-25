@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ArticleView extends StatefulWidget {
-  String url;
-  String desc;
+  final String url;
+  final String desc;
 
-  ArticleView({super.key, required this.url, required this.desc});
+  const ArticleView({super.key, required this.url, required this.desc});
 
   @override
   State<ArticleView> createState() => _ArticleViewState();
@@ -13,55 +14,92 @@ class ArticleView extends StatefulWidget {
 
 class _ArticleViewState extends State<ArticleView> {
   late final WebViewController _controller;
-  bool _loading = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    final WebViewController controller = WebViewController()
+    _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.white)
+      ..setBackgroundColor(Colors.transparent)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            setState(() {
+              _isLoading = true;
+            });
+          },
+          onPageFinished: (String url) {
+            setState(() {
+              _isLoading = false;
+            });
+          },
+          onWebResourceError: (WebResourceError error) {
+            setState(() {
+              _isLoading = false;
+            });
+          },
+        ),
+      )
       ..loadRequest(Uri.parse(widget.url));
-    _controller = controller;
-    setState(() {
-      _loading = true;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _loading
-        ? Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              //add back button
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              title: const Row(
-                children: [
-                  Text(
-                    "Flutter",
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Press",
-                    style: TextStyle(
-                        color: Colors.blue, fontWeight: FontWeight.bold),
-                  ),
-                ],
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        centerTitle: true,
+        leading: Container(
+          margin: EdgeInsets.only(left: 16.w),
+          child: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Theme.of(context).iconTheme.color,
+              size: 20.sp,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Flutter",
+              style: TextStyle(
+                color: Theme.of(context).textTheme.titleLarge?.color,
+                fontWeight: FontWeight.w800,
+                fontSize: 20.sp,
+                letterSpacing: -0.5,
               ),
             ),
-            body: WebViewWidget(controller: _controller),
-          )
-        : const Center(
-            child: CircularProgressIndicator(),
-          );
+            Text(
+              "Press",
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.w800,
+                fontSize: 20.sp,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_isLoading)
+            Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

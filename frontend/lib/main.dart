@@ -7,19 +7,24 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:news_app/app/auth/auth_controller.dart';
 import 'package:news_app/app/auth/login_screen.dart';
 import 'package:news_app/controller/theme_support.dart';
-import 'package:news_app/dependency_injection.dart';
+
 import 'package:news_app/screen/bottom_nav_home_screen.dart';
 import 'package:news_app/screen/landing_page.dart';
 import 'package:news_app/services/api_services.dart';
 import 'package:news_app/utils/flex_color_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:news_app/initial_binding.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://zkfidlxtrvkzwplhrkld.supabase.co',
+    anonKey: 'sb_publishable_ZippgTLEC30A_udUNyQTZQ_PSL-T_s_',
+  );
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isFirstLaunch = prefs.getBool('firstLaunch') ?? true;
   await ScreenUtil.ensureScreenSize();
-  DependencyInjection.init();
 
   //Hive related code
   await Hive.initFlutter();
@@ -42,8 +47,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  AuthController _authController = Get.put(AuthController());
-
   @override
   void initState() {
     super.initState();
@@ -52,65 +55,18 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final cache = DefaultCacheManager();
+    final supabase = Supabase.instance.client;
     cache.emptyCache();
     ScreenUtil.init(context);
-
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      initialBinding: InitialBinding(),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
-      home: FutureBuilder<Widget>(
-        future: _checkLoginState(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return const Scaffold(
-              body: Center(
-                child: Text('Error loading app'),
-              ),
-            );
-          }
-
-          return snapshot.data ?? const LoginScreen();
-        },
-      ),
+      home: supabase.auth.currentSession != null
+          ? BottomNavHomeScreen()
+          : LoginScreen(),
     );
-  }
-
-  // Check login state
-  Future<Widget> _checkLoginState() async {
-    try {
-      final ApiService apiService = Get.put(ApiService());
-      final tokenValid = await apiService.checkToken();
-      print('Token valid? $tokenValid');
-      if (!tokenValid) {
-        print('Token invalid, clearing cache and logging out');
-        await DefaultCacheManager().emptyCache();
-        await _authController.logout();
-        return const LoginScreen();
-      }
-
-      bool? isLoggedIn = await _authController.getLogin();
-      print('isLoggedIn: $isLoggedIn');
-
-      if (isLoggedIn == true) {
-        print('User is logged in, going to home');
-        return const BottomNavHomeScreen();
-      } else {
-        print('User is not logged in, going to login');
-        return const LoginScreen();
-      }
-    } catch (e) {
-      print('Error checking login state: $e');
-      return const LoginScreen();
-    }
   }
 }

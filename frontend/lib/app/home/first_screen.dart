@@ -1,9 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:news_app/app/home/home_screen_controller.dart';
 import 'package:news_app/components/BlogTile.dart';
 import 'package:news_app/components/category_tile.dart';
@@ -58,9 +57,7 @@ class _FirstScreenState extends State<FirstScreen> {
       ),
       body: GetBuilder<HomeScreenController>(
         builder: (value) => _homeScreenController.loading
-            ? LiquidPullToRefresh(
-                height: 300,
-                showChildOpacityTransition: false,
+            ? RefreshIndicator(
                 onRefresh: () async {
                   await getData();
                 },
@@ -70,56 +67,79 @@ class _FirstScreenState extends State<FirstScreen> {
                       child: Container(
                         margin: EdgeInsets.only(top: 10.h),
                         height: 80.h,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _homeScreenController.categories.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Get.to(
-                                  () => CategoryNewsScreen(
-                                      name: _homeScreenController
-                                              .categories[index].categoryName ??
-                                          ''),
-                                  transition: Transition.native,
-                                );
-                              },
-                              child: CategoryTile(
-                                  categoryName: _homeScreenController
-                                          .categories[index].categoryName ??
-                                      '',
-                                  image: _homeScreenController
-                                          .categories[index].image ??
-                                      ''),
-                            );
-                          },
+                        child: AnimationLimiter(
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _homeScreenController.categories.length,
+                            itemBuilder: (context, index) {
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 375),
+                                child: SlideAnimation(
+                                  horizontalOffset: 50.0,
+                                  child: FadeInAnimation(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Get.to(
+                                          () => CategoryNewsScreen(
+                                              name: _homeScreenController
+                                                      .categories[index]
+                                                      .categoryName ??
+                                                  ''),
+                                          transition: Transition.native,
+                                        );
+                                      },
+                                      child: CategoryTile(
+                                          categoryName: _homeScreenController
+                                                  .categories[index]
+                                                  .categoryName ??
+                                              '',
+                                          image: _homeScreenController
+                                                  .categories[index].image ??
+                                              ''),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
-                          return BlogTile(
-                            source: _homeScreenController
-                                    .articleList[index].source ??
-                                '',
-                            imageUrl: _homeScreenController
-                                    .articleList[index].imageUrl ??
-                                '404',
-                            title: _homeScreenController
-                                    .articleList[index].title ??
-                                '',
-                            desc: _homeScreenController
-                                    .articleList[index].description ??
-                                '',
-                            url: _homeScreenController.articleList[index].url ??
-                                '',
-                            publishedAt: _homeScreenController
-                                    .articleList[index].publishedAt ??
-                                '',
-                            author: _homeScreenController
-                                    .articleList[index].author ??
-                                '',
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 375),
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                child: BlogTile(
+                                  source: _homeScreenController
+                                          .articleList[index].source ??
+                                      '',
+                                  imageUrl: _homeScreenController
+                                          .articleList[index].imageUrl ??
+                                      '404',
+                                  title: _homeScreenController
+                                          .articleList[index].title ??
+                                      '',
+                                  desc: _homeScreenController
+                                          .articleList[index].description ??
+                                      '',
+                                  url: _homeScreenController
+                                          .articleList[index].url ??
+                                      '',
+                                  publishedAt: _homeScreenController
+                                          .articleList[index].publishedAt ??
+                                      '',
+                                  author: _homeScreenController
+                                          .articleList[index].author ??
+                                      '',
+                                ),
+                              ),
+                            ),
                           );
                         },
                         childCount: _homeScreenController.articleList.length,

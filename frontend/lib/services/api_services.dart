@@ -26,7 +26,7 @@ class ApiService extends GetxController {
           jsonData['articles'] is List) {
         articleList = List<ArticleModel>.from(jsonData['articles']
             .map((article) => ArticleModel.fromJson(article)));
-        print('Article List from cache: $articleList');
+        // print('Article List from cache: $articleList');
       }
     } else {
       const String urlExplore =
@@ -49,7 +49,7 @@ class ApiService extends GetxController {
             );
             cache.putFile('article_list', res.bodyBytes);
             articleList.add(articleModel);
-            print("not cached");
+            // print("not cached");
           }
         });
       }

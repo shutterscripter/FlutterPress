@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:news_app/screen/fav_news.dart';
@@ -14,58 +14,47 @@ class BottomNavHomeScreen extends StatefulWidget {
 }
 
 class _BottomNavHomeScreenState extends State<BottomNavHomeScreen> {
-  final NavigationController navigationController =
-      Get.put(NavigationController());
-
+  final screens = [FirstScreen(), FavNews(), SettingsScreen()];
+  var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      bottomNavigationBar: Obx(
-        () => NavigationBar(
-          backgroundColor: Theme.of(context).canvasColor,
-          surfaceTintColor: Theme.of(context).canvasColor,
-          indicatorColor: Theme.of(context).primaryColor.withValues(alpha: 0.4),
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-          elevation: 1,
-          selectedIndex: navigationController.selectedIndex.value,
-          onDestinationSelected: (int index) =>
-              navigationController.selectedIndex.value = index,
-          destinations: [
-            NavigationDestination(
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: Theme.of(context).canvasColor,
+        surfaceTintColor: Theme.of(context).canvasColor,
+        indicatorColor: Theme.of(context).primaryColor.withValues(alpha: 0.4),
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        elevation: 1,
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        destinations: [
+          NavigationDestination(
+            icon: Icon(
+              Iconsax.home,
+              size: 20,
+            ),
+            label: 'Home',
+          ),
+          NavigationDestination(
               icon: Icon(
-                Iconsax.home,
+                Iconsax.bookmark,
                 size: 20,
               ),
-              label: 'Home',
-            ),
-            NavigationDestination(
-                icon: Icon(
-                  Iconsax.bookmark,
-                  size: 20,
-                ),
-                label: 'Bookmark'),
-
-            NavigationDestination(
-                icon: Icon(
-                  Iconsax.setting,
-                  size: 20,
-                ),
-                label: 'Settings'),
-          ],
-        ),
+              label: 'Bookmark'),
+          NavigationDestination(
+              icon: Icon(
+                Iconsax.setting,
+                size: 20,
+              ),
+              label: 'Settings'),
+        ],
       ),
-      body: Obx(() => navigationController
-          .screens[navigationController.selectedIndex.value]),
+      body: screens[selectedIndex],
     );
   }
-}
-
-class NavigationController extends GetxController {
-  final Rx<int> selectedIndex = 0.obs;
-  final screens = [
-    FirstScreen(),
-    FavNews(),
-    SettingsScreen()
-  ];
 }

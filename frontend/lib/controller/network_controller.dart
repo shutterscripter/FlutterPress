@@ -6,12 +6,13 @@ class NetworkController extends GetxController {
   final Connectivity _connectivity = Connectivity();
 
   @override
-  void onInit() {
+  void onReady() {
     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-    super.onInit();
+    super.onReady();
   }
 
   void _updateConnectionStatus(ConnectivityResult connectivityResult) {
+    if (Get.overlayContext == null) return;
     if (connectivityResult == ConnectivityResult.none) {
       Get.rawSnackbar(
         messageText: const Text(
@@ -31,9 +32,13 @@ class NetworkController extends GetxController {
           color: Colors.white,
         ),
       );
-    }else{
-      if(Get.isSnackbarOpen){
-        Get.closeCurrentSnackbar();
+    } else {
+      if (Get.isSnackbarOpen) {
+        try {
+          Get.closeCurrentSnackbar();
+        } catch (e) {
+          debugPrint("Error closing snackbar: $e");
+        }
       }
     }
   }
